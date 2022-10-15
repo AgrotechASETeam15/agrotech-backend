@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  server:
+    image: node:16.13.0
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    working_dir: /usr/agrotech
+    ports:
+      - 8080:8080
+    networks:
+      - agrotech
+    depends_on:
+      - maria_db
+    volumes:
+      - ./src:/usr/agrotech/src
+      - './logs:/usr/agrotech/logs'
+  maria_db:
+    image: mariadb:10.5.12
+    ports:
+      - 8081:3306
+    networks:
+      - agrotech
+    environment:
+      MYSQL_ROOT_PASSWORD: 'password'
+
+networks:
+  agrotech:
