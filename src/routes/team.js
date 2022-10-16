@@ -4,6 +4,8 @@ const getConnection = require('../services/config/database');
 
 let router = express.Router();
 
+//create mariadb connection
+
 router.post('/add-member', async (req, res) => {
   let connection = await getConnection();
   const { full_name, student_id } = req.body;
@@ -36,7 +38,9 @@ router.post('/add-member', async (req, res) => {
       message: 'Internal server error',
     });
   } finally {
-    connection.end();
+    if (connection) {
+      connection.end();
+    }
   }
 });
 
