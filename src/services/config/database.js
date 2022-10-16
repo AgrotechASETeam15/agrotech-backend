@@ -19,9 +19,3 @@ async function getConnection() {
 }
 
 module.exports = getConnection;
-
-// Host: `0.0.0.0`
-// User: `root`
-// Password: `password`
-// Port: `8081`
-// ```

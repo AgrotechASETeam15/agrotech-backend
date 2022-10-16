@@ -44,4 +44,37 @@ router.post('/add-member', async (req, res) => {
   }
 });
 
+router.get('/get-members', async (req, res) => {
+  let connection = await getConnection();
+  try {
+    const result = await connection.query('SELECT * FROM team_members');
+    console.log(
+      `${chalk.green(`Success - team members retrieved from the database`)}`
+    );
+
+    if (result) {
+      return res.status(200).send({
+        success: true,
+        message: 'Team members retrieved from the database successfully',
+        data: result,
+      });
+    } else {
+      return res.status(400).send({
+        success: false,
+        message: 'Team members not retrieved from the database',
+      });
+    }
+  } catch (err) {
+    console.log(`${chalk.red(`Error - ${err}`)}`);
+    return res.status(500).send({
+      success: false,
+      message: 'Internal server error',
+    });
+  } finally {
+    if (connection) {
+      connection.end();
+    }
+  }
+});
+
 module.exports = router;
