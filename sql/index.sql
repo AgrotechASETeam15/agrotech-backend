@@ -8,3 +8,13 @@ CREATE TABLE IF NOT EXISTS  team_members(
         PRIMARY KEY (id),
         UNIQUE (student_id)
     ) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS users (
+        id INT NOT NULL AUTO_INCREMENT,
+        email VARCHAR(255) NOT NULL,
+        full_name VARCHAR(255) NOT NULL,
+        hash  VARCHAR(255) NOT NULL,
+        salt VARCHAR(255) NOT NULL,
+        PRIMARY KEY (id),
+        UNIQUE (email)
+)
