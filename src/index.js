@@ -5,6 +5,7 @@ const session = require('express-session');
 
 const team = require('./routes/team');
 const email = require('./routes/email');
+const drip = require('./routes/drip');
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use(
 
 app.use('/team', team);
 app.use('/email', email);
+app.use('/drip', drip);
 app.get('/', (req, res) => {
   return res.send('AgroTech Backend version 1.0.0');
 });
