@@ -28,17 +28,16 @@ router.post('/add-kit', async (req, res) => {
   ) {
     return res.status(400).send({ message: 'Please fill all fields' });
   }
+  const kitId = crypto.randomUUID();
 
   let db;
   try {
-    const kitId = crypto.randomUUID();
     db = await getConnection();
 
     // check if kit already exists
-    const results = await db.query(
-      'Select * from drip_info where kit_name=? ',
-      [kitName]
-    );
+    const results = await db.query(' SELECT * FROM drip_info WHERE kit_id=?', [
+      kitId,
+    ]);
 
     if (results.length > 0) {
       return res.json({
@@ -94,6 +93,77 @@ router.get('/get-kits', async (req, res) => {
         success: false,
         message: 'No kits founds',
       });
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (db) db.end();
+  }
+});
+
+// if kit exists, update the kit
+router.put('/update-kit/:kitId', async (req, res) => {
+  const { kitId } = req.params;
+  const {
+    kitName,
+    kitStatus,
+    sensorOne,
+    sensorTwo,
+    sensorThree,
+    valveOne,
+    valveTwo,
+    valveThree,
+  } = req.body;
+
+  if (
+    !kitName ||
+    !kitStatus ||
+    !sensorOne ||
+    !sensorTwo ||
+    !sensorThree ||
+    !valveOne ||
+    !valveTwo ||
+    !valveThree
+  ) {
+    return res.status(400).send({ message: 'Please fill all fields' });
+  }
+
+  let db;
+  try {
+    db = await getConnection();
+
+    // check if kit already exists
+    const results = await db.query(' SELECT * FROM drip_info WHERE kit_id=?', [
+      kitId,
+    ]);
+
+    if (results.length > 0) {
+      const result = await db.query(
+        'UPDATE drip_info SET kit_name=?, kit_status=?, sensor_one=?, sensor_two=?, sensor_three=?, valve_one=?, valve_two=?, valve_three=? WHERE kit_id=?',
+        [
+          kitName,
+          kitStatus,
+          sensorOne,
+          sensorTwo,
+          sensorThree,
+          valveOne,
+          valveTwo,
+          valveThree,
+          kitId,
+        ]
+      );
+      console.log(
+        `${chalk.green('Success')} -  ${chalk.blue(kitName)} ${chalk.green(
+          'Updated in the database'
+        )}`
+      );
+      if (result) {
+        return res.status(200).send({ message: 'Kit updated successfully' });
+      } else {
+        return res.status(400).send({ message: 'Kit not updated' });
+      }
+    } else {
+      return res.status(400).send({ message: 'Kit not found' });
     }
   } catch (error) {
     console.log(error);
