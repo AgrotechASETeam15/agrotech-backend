@@ -14,7 +14,16 @@ const port = process.env.SERVER_PORT || 8080;
 
 app.set('port', port);
 app.use(morgan(':method :url :status :response-time'));
-app.use(cors()), app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.ORIGINS || [
+      'http://0.0.0.0:3000',
+      'http://localhost:3000',
+    ],
+    credentials: true,
+  })
+);
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   session({

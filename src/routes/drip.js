@@ -3,6 +3,7 @@ let router = express.Router();
 const getConnection = require('../services/config/database');
 const crypto = require('crypto');
 const chalk = require('chalk');
+const axios = require('axios');
 
 router.post('/add-kit', async (req, res) => {
   const {
@@ -102,69 +103,33 @@ router.get('/get-kits', async (req, res) => {
 });
 
 // if kit exists, update the kit
-router.put('/update-kit/:kitId', async (req, res) => {
-  const { kitId } = req.params;
-  const {
-    kitName,
-    kitStatus,
-    sensorOne,
-    sensorTwo,
-    sensorThree,
-    valveOne,
-    valveTwo,
-    valveThree,
-  } = req.body;
-
-  if (
-    !kitName ||
-    !kitStatus ||
-    !sensorOne ||
-    !sensorTwo ||
-    !sensorThree ||
-    !valveOne ||
-    !valveTwo ||
-    !valveThree
-  ) {
-    return res.status(400).send({ message: 'Please fill all fields' });
-  }
+router.put('/update-kit', async (req, res) => {
+  const { data } = await axios.get(
+    'https://api.thingspeak.com/channels/1922410/feeds.json?results=1'
+  );
+  console.log(`data`, data?.feeds[0]);
 
   let db;
   try {
     db = await getConnection();
+    const result = await db.query(
+      'UPDATE drip_info SET   sensor_one=?, sensor_two=?, sensor_three=?, valve_one=?, valve_two=?, valve_three=? WHERE kit_id=?',
 
-    // check if kit already exists
-    const results = await db.query(' SELECT * FROM drip_info WHERE kit_id=?', [
-      kitId,
-    ]);
+      [
+        data?.feeds[0]?.field1,
+        data?.feeds[0]?.field2,
+        data?.feeds[0]?.field3,
+        data?.feeds[0]?.field4,
+        data?.feeds[0]?.field5,
+        data?.feeds[0]?.field6,
+        data?.feeds[0]?.field7,
+      ]
+    );
 
-    if (results.length > 0) {
-      const result = await db.query(
-        'UPDATE drip_info SET kit_name=?, kit_status=?, sensor_one=?, sensor_two=?, sensor_three=?, valve_one=?, valve_two=?, valve_three=? WHERE kit_id=?',
-        [
-          kitName,
-          kitStatus,
-          sensorOne,
-          sensorTwo,
-          sensorThree,
-          valveOne,
-          valveTwo,
-          valveThree,
-          kitId,
-        ]
-      );
-      console.log(
-        `${chalk.green('Success')} -  ${chalk.blue(kitName)} ${chalk.green(
-          'Updated in the database'
-        )}`
-      );
-      if (result) {
-        return res.status(200).send({ message: 'Kit updated successfully' });
-      } else {
-        return res.status(400).send({ message: 'Kit not updated' });
-      }
-    } else {
-      return res.status(400).send({ message: 'Kit not found' });
-    }
+    res.send({
+      success: true,
+      message: 'Kit updated successfully',
+    });
   } catch (error) {
     console.log(error);
   } finally {
