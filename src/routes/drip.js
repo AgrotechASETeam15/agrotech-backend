@@ -169,7 +169,6 @@ router.get('/get-kit/:kitId', async (req, res) => {
 });
 
 // delte a kit from the database
-
 router.delete('/delete-kit/:kitId', async (req, res) => {
   const { kitId } = req.params;
   if (!kitId) {
@@ -179,21 +178,22 @@ router.delete('/delete-kit/:kitId', async (req, res) => {
   try {
     db = await getConnection();
     // find the kit in the database
-    const result = await db.query('SELECT * FROM drip_info WHERE kit_id = ?', [
+
+    const result = await db.query('DELETE FROM pestricides WHERE kit_id=?', [
       kitId,
     ]);
-    if (result.length === 0) {
-      return res.status(400).send({ message: 'Kit not found' });
-    }
+
     // delete the kit from the database
-    const deleteResult = await db.query(
-      'DELETE FROM drip_info WHERE kit_id = ?',
-      [kitId]
-    );
-    if (deleteResult) {
-      return res.status(200).send({ message: 'Kit deleted successfully' });
+    if (result.affectedRows > 0) {
+      return res.status(200).send({
+        message: 'Kit deleted successfully',
+        success: true,
+      });
     } else {
-      return res.status(400).send({ message: 'Kit not deleted' });
+      return res.status(400).send({
+        success: false,
+        message: 'No kit found',
+      });
     }
   } catch (error) {
     console.log(error);
