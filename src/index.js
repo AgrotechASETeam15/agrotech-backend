@@ -7,6 +7,7 @@ const team = require('./routes/team');
 const email = require('./routes/email');
 const drip = require('./routes/drip');
 const pestricide = require('./routes/pesticide');
+const greenhouse = require('./routes/greenhouse');
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use('/team', team);
 app.use('/email', email);
 app.use('/drip', drip);
 app.use('/pesticides', pestricide);
+app.use('/greenhouse', greenhouse);
 app.get('/', (req, res) => {
   return res.send('AgroTech Backend version 1.0.0');
 });

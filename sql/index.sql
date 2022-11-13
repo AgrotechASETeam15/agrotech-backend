@@ -46,3 +46,18 @@ CREATE TABLE IF NOT EXISTS pestricides (
         PRIMARY KEY (id),
         UNIQUE (kit_id)
     ) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS greenhouse (
+        id INT NOT NULL AUTO_INCREMENT,
+        kit_id VARCHAR(255) NOT NULL,
+        kit_name VARCHAR(255) NOT NULL,
+        kit_status VARCHAR(255) NOT NULL,
+        tempreture VARCHAR(255) NOT NULL,
+        humidity VARCHAR(255) NOT NULL,
+        smoke VARCHAR(255) NOT NULL,
+        light_density VARCHAR(255) NOT NULL,
+        soil_moisture VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE (kit_id)
+    ) ENGINE=INNODB;
