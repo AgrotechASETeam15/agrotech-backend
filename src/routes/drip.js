@@ -179,7 +179,7 @@ router.delete('/delete-kit/:kitId', async (req, res) => {
     db = await getConnection();
     // find the kit in the database
 
-    const result = await db.query('DELETE FROM pestricides WHERE kit_id=?', [
+    const result = await db.query('DELETE FROM drip_info WHERE kit_id=?', [
       kitId,
     ]);
 
