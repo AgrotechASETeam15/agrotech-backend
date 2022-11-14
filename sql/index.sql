@@ -17,4 +17,47 @@ CREATE TABLE IF NOT EXISTS users (
         salt VARCHAR(255) NOT NULL,
         PRIMARY KEY (id),
         UNIQUE (email)
-)
+) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS  drip_info (
+        id INT NOT NULL AUTO_INCREMENT,
+        kit_id VARCHAR(255) NOT NULL,
+        kit_name VARCHAR(255) NOT NULL,
+        kit_status VARCHAR(255) NOT NULL,
+        sensor_one VARCHAR(255) NOT NULL,
+        sensor_two VARCHAR(255) NOT NULL,
+        sensor_three VARCHAR(255) NOT NULL,
+        valve_one VARCHAR(255) NOT NULL,
+        valve_two VARCHAR(255) NOT NULL,
+        valve_three VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE (kit_id)
+    ) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS pestricides (
+        id INT NOT NULL AUTO_INCREMENT,
+        kit_id VARCHAR(255) NOT NULL,
+        kit_name VARCHAR(255) NOT NULL,
+        kit_status VARCHAR(255) NOT NULL,
+        sensor_one VARCHAR(255) NOT NULL,
+        sensor_two VARCHAR(255) NOT NULL,
+        valve_one VARCHAR(255) NOT NULL,
+        PRIMARY KEY (id),
+        UNIQUE (kit_id)
+    ) ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS greenhouse (
+        id INT NOT NULL AUTO_INCREMENT,
+        kit_id VARCHAR(255) NOT NULL,
+        kit_name VARCHAR(255) NOT NULL,
+        kit_status VARCHAR(255) NOT NULL,
+        tempreture VARCHAR(255) NOT NULL,
+        humidity VARCHAR(255) NOT NULL,
+        smoke VARCHAR(255) NOT NULL,
+        light_density VARCHAR(255) NOT NULL,
+        soil_moisture VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (id),
+        UNIQUE (kit_id)
+    ) ENGINE=INNODB;

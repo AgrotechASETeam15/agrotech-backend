@@ -5,6 +5,9 @@ const session = require('express-session');
 
 const team = require('./routes/team');
 const email = require('./routes/email');
+const drip = require('./routes/drip');
+const pestricide = require('./routes/pesticide');
+const greenhouse = require('./routes/greenhouse');
 
 const app = express();
 
@@ -13,7 +16,16 @@ const port = process.env.SERVER_PORT || 8080;
 
 app.set('port', port);
 app.use(morgan(':method :url :status :response-time'));
-app.use(cors()), app.use(express.json());
+app.use(
+  cors({
+    origin: process.env.ORIGINS || [
+      'http://0.0.0.0:3000',
+      'http://localhost:3000',
+    ],
+    credentials: true,
+  })
+);
+app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(
   session({
@@ -29,6 +41,9 @@ app.use(
 
 app.use('/team', team);
 app.use('/email', email);
+app.use('/drip', drip);
+app.use('/pesticides', pestricide);
+app.use('/greenhouse', greenhouse);
 app.get('/', (req, res) => {
   return res.send('AgroTech Backend version 1.0.0');
 });
