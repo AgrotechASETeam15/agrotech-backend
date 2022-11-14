@@ -11,7 +11,7 @@ const greenhouse = require('./routes/greenhouse');
 
 const app = express();
 
-const host = '0.0.0.0';
+const host = process.env.HOST || '0.0.0.0';
 const port = process.env.SERVER_PORT || 8080;
 
 app.set('port', port);
@@ -21,6 +21,7 @@ app.use(
     origin: process.env.ORIGINS || [
       'http://0.0.0.0:3000',
       'http://localhost:3000',
+      'https://agrotech-ase.herokuapp.com',
     ],
     credentials: true,
   })
