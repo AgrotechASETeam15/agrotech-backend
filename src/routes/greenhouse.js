@@ -100,4 +100,104 @@ router.get('/get-kits', async (req, res) => {
   }
 });
 
+// if kit exists, update the kit
+router.put('/update-kit', async (req, res) => {
+  const { data } = await axios.get(
+    'https://api.thingspeak.com/channels/1922410/feeds.json?results=1'
+  );
+  console.log(`data`, data?.feeds[0]);
+
+  let db;
+  try {
+    db = await getConnection();
+    const result = await db.query(
+      'UPDATE greenhouse SET kit_status=?, tempreture=?, humidity=?, smoke=?, soil_moisture=?, light_density=? WHERE kit_id=?',
+
+      [
+        data?.feeds[0]?.field1,
+        data?.feeds[0]?.field2,
+        data?.feeds[0]?.field3,
+        data?.feeds[0]?.field4,
+        data?.feeds[0]?.field5,
+        data?.feeds[0]?.field6,
+        '1',
+      ]
+    );
+
+    res.send({
+      success: true,
+      message: 'Kit updated successfully',
+    });
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (db) db.end();
+  }
+});
+
+router.get('/get-kit/:kitId', async (req, res) => {
+  const { kitId } = req.params;
+
+  if (!kitId) {
+    return res.status(400).send({ message: 'Please provide a kit id' });
+  }
+  let db;
+  try {
+    db = await getConnection();
+    const result = await db.query('SELECT * FROM greenhouse WHERE kit_id = ?', [
+      kitId,
+    ]);
+    if (result) {
+      return res.status(200).send({
+        message: 'Kit fetched successfully',
+        success: true,
+        kit: result[0],
+      });
+    } else {
+      return res.status(400).send({
+        success: false,
+        message: 'No kit found',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (db) db.end();
+  }
+});
+
+// delte a kit from the database
+router.delete('/delete-kit/:kitId', async (req, res) => {
+  const { kitId } = req.params;
+  if (!kitId) {
+    return res.status(400).send({ message: 'Please provide a kit id' });
+  }
+  let db;
+  try {
+    db = await getConnection();
+    // find the kit in the database
+
+    const result = await db.query('DELETE FROM greenhouse WHERE kit_id=?', [
+      kitId,
+    ]);
+
+    // delete the kit from the database
+    if (result.affectedRows > 0) {
+      return res.status(200).send({
+        message: 'Kit deleted successfully',
+        success: true,
+      });
+    } else {
+      return res.status(400).send({
+        success: false,
+        message: 'No kit found',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    if (db) db.end();
+  }
+});
+
 module.exports = router;
