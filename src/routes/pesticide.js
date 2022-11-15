@@ -78,20 +78,26 @@ router.get('/get-kits', async (req, res) => {
 // if kit exists, update the kit
 router.put('/update-kit', async (req, res) => {
   const { data } = await axios.get(
-    'https://api.thingspeak.com/channels/1922410/feeds.json?results=1'
+    'https://api.thingspeak.com/channels/1937551/feeds.json?api_key=8LSZYBFZUZBXVO8L&results=1'
   );
   console.log(`data`, data?.feeds[0]);
+
+  // return res.status(200).send({
+  //   message: 'Kit updated successfully',
+  //   success: true,
+  //   kits: data?.feeds[0],
+  // });
 
   let db;
   try {
     db = await getConnection();
     const result = await db.query(
-      'UPDATE pestricides SET   sensor_one=?, sensor_two=?, valve_one=? WHERE kit_id=?',
+      'UPDATE pestricides SET sensor_one=?, sensor_two=?, valve_one=? WHERE kit_id=?',
       [
         data?.feeds[0].field1,
         data?.feeds[0].field2,
+        data?.feeds[0].field3,
         data?.feeds[0].field4,
-        data?.feeds[0].field7,
       ]
     );
 
@@ -118,18 +124,31 @@ router.get('/get-kit/:kitId', async (req, res) => {
     const result = await db.query('SELECT * FROM pestricides WHERE kit_id=?', [
       kitId,
     ]);
-    if (result) {
+
+    if (result.length > 0) {
+      const updateKit = await axios.put(
+        'http://localhost:8080/pesticides/update-kit'
+      );
+      console.log(`updateKit`, updateKit);
       return res.status(200).send({
-        message: 'Kit fetched successfully',
         success: true,
+        message: 'Kit found',
         kit: result[0],
       });
-    } else {
-      return res.status(400).send({
-        success: false,
-        message: 'No kit found',
-      });
     }
+
+    // if (result) {
+    //   return res.status(200).send({
+    //     message: 'Kit fetched successfully',
+    //     success: true,
+    //     kit: result[0],
+    //   });
+    // } else {
+    //   return res.status(400).send({
+    //     success: false,
+    //     message: 'No kit found',
+    //   });
+    // }
   } catch (error) {
     console.log(error);
   } finally {
