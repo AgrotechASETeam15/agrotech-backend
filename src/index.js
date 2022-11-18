@@ -12,7 +12,7 @@ const greenhouse = require('./routes/greenhouse');
 const app = express();
 
 const host = process.env.HOST || '0.0.0.0';
-const port = process.env.SERVER_PORT || 8080;
+const port = process.env.PORT || 8080;
 
 app.set('port', port);
 app.use(morgan(':method :url :status :response-time'));
