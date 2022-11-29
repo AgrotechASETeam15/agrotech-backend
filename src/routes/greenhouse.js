@@ -147,16 +147,16 @@ router.get('/get-kit/:kitId', async (req, res) => {
     const result = await db.query('SELECT * FROM greenhouse WHERE kit_id = ?', [
       kitId,
     ]);
-    if (result) {
+
+    if (result.length > 0) {
+      const updateKit = await axios.put(
+        'http://localhost:8080/greenhouse/update-kit'
+      );
+      console.log(`updateKit`, updateKit);
       return res.status(200).send({
-        message: 'Kit fetched successfully',
         success: true,
+        message: 'Kit found',
         kit: result[0],
-      });
-    } else {
-      return res.status(400).send({
-        success: false,
-        message: 'No kit found',
       });
     }
   } catch (error) {
