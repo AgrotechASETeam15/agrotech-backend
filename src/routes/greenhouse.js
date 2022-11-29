@@ -103,7 +103,7 @@ router.get('/get-kits', async (req, res) => {
 // if kit exists, update the kit
 router.put('/update-kit', async (req, res) => {
   const { data } = await axios.get(
-    'https://api.thingspeak.com/channels/1922410/feeds.json?results=1'
+    'https://api.thingspeak.com/channels/1932134/feeds.json?results=1'
   );
   console.log(`data`, data?.feeds[0]);
 
@@ -114,13 +114,13 @@ router.put('/update-kit', async (req, res) => {
       'UPDATE greenhouse SET kit_status=?, tempreture=?, humidity=?, smoke=?, soil_moisture=?, light_density=? WHERE kit_id=?',
 
       [
-        data?.feeds[0]?.field1,
+        'Active',
         data?.feeds[0]?.field2,
         data?.feeds[0]?.field3,
+        data?.feeds[0]?.field1,
         data?.feeds[0]?.field4,
-        data?.feeds[0]?.field5,
         data?.feeds[0]?.field6,
-        '1',
+        data?.feeds[0]?.field7,
       ]
     );
 
